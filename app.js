@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
-const jsonBody = require('body/json');
+const bodyParser = require('body-parser');
 const port = 3000;
+app.use(bodyParser.json());
 
 var body;
 var scores = [{
@@ -13,19 +14,20 @@ var scores = [{
 }];
 
 app.get(!'/scores', (req, res) => res.statusCode = 404);
-  
+
 app.get('/scores', (req, res) => {
   res.statusCode = 200;
+  res.setHeader('Content-type', 'application/javascript');
   scores.sort((a, b) => (b.score - a.score));
   scores = scores.splice(0, 3);
   res.send(scores);
+  res.end();
 });
 
-app.post('/scores',(req, res) => {
+app.post('/scores', (req, res) => {
   res.statusCode = 201;
-  jsonBody(req, res, (err, body) => {
-      scores.push(body);
-  })
+  scores.push(req.body);
+  res.end();
 });
 
 app.listen(port, () => console.log('Example app listening on port 3000!'))
